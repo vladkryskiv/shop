@@ -1,10 +1,9 @@
-// src/user/user.service.ts
 import { Injectable, ConflictException, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
-import * as crypto from 'crypto';
 import { MailerService } from '../mailer/mailer.service';
 import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
 import { Role } from './role.enum';
 
 @Injectable()
@@ -14,7 +13,8 @@ export class UserService {
   constructor(
     private prisma: PrismaService,
     private mailerService: MailerService,
-    private jwtService: JwtService
+    private jwtService: JwtService,
+    private configService: ConfigService
   ) {}
 
   async sendVerificationCode(email: string, name: string, password: string) {
@@ -24,7 +24,7 @@ export class UserService {
     this.verificationCodes.set(email, { name, email, password: hashedPassword, code });
 
     const mailOptions = {
-      from: 'your-email@gmail.com',
+      from: this.configService.get<string>('EMAIL_USER'),
       to: email,
       subject: 'Email Verification Code',
       text: `Your verification code is: ${code}`
@@ -47,7 +47,7 @@ export class UserService {
         name,
         email,
         password,
-        role: Role.User, // Ensure this matches the enum
+        role: Role.User,
       },
     });
   }
@@ -58,7 +58,7 @@ export class UserService {
       throw new UnauthorizedException('Invalid email or password');
     }
 
-    const payload = { sub: user.id, email: user.email, role: user.role };
+    const payload = { sub: user.id, email: user.email };
     return {
       access_token: this.jwtService.sign(payload),
     };
@@ -68,7 +68,7 @@ export class UserService {
     return this.prisma.user.findUnique({ where: { email } });
   }
 
-  async comparePasswords(providedPassword: string, storedPassword: string) {
-    return bcrypt.compare(providedPassword, storedPassword);
+  async comparePasswords(plainTextPassword: string, hashedPassword: string) {
+    return bcrypt.compare(plainTextPassword, hashedPassword);
   }
 }

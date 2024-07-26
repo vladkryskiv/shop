@@ -1,8 +1,7 @@
-// src/app.module.ts
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { PrismaModule } from './prisma/prisma.module';
-import { ProductModule } from './product/product.module';
+import { PrismaModule } from './prisma/prisma.module'; 
+import { ProductModule } from './product/product.module'; 
 import { UserController } from './user/user.controller';
 import { PrismaService } from './prisma/prisma.service';
 import { UserModule } from './user/user.module';
