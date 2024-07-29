@@ -1,4 +1,4 @@
-import { Injectable, ConflictException, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
 import { MailerService } from '../mailer/mailer.service';
@@ -58,7 +58,7 @@ export class UserService {
       throw new UnauthorizedException('Invalid email or password');
     }
 
-    const payload = { sub: user.id, email: user.email };
+    const payload = { sub: user.id, email: user.email, roles: user.role };  // Ensure roles are included
     return {
       access_token: this.jwtService.sign(payload),
     };

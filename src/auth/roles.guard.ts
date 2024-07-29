@@ -1,9 +1,7 @@
-// src/auth/roles.guard.ts
-import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
+import { Injectable, CanActivate, ExecutionContext, UnauthorizedException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
 import { Observable } from 'rxjs';
-import { ROLES_KEY } from './roles.decorator';
 import { Role } from '../user/role.enum';
 
 @Injectable()
@@ -13,17 +11,27 @@ export class RolesGuard implements CanActivate {
   canActivate(
     context: ExecutionContext,
   ): boolean | Promise<boolean> | Observable<boolean> {
-    const roles = this.reflector.get<Role[]>(ROLES_KEY, context.getHandler());
+    const roles = this.reflector.get<Role[]>('roles', context.getHandler());
     if (!roles) {
       return true;
     }
     const request = context.switchToHttp().getRequest();
-    const authHeader = request.headers.authorization;
-    const token = authHeader && authHeader.split(' ')[1];
+    const token = request.headers.authorization?.split(' ')[1];
+
     if (!token) {
-      return false;
+      throw new UnauthorizedException('No token provided');
     }
-    const decoded = this.jwtService.verify(token);
-    return roles.includes(decoded.role);
+
+    try {
+      const user = this.jwtService.verify(token);
+    //console.log('User roles:', user.roles);
+      if (!roles.some(role => user.roles.includes(role))) {
+        throw new UnauthorizedException('Forbidden');
+      }
+      return true;
+    } catch (error) {
+      console.error(error);
+      throw new UnauthorizedException('Forbidden');
+    }
   }
 }
