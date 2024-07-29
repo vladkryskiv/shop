@@ -71,4 +71,15 @@ export class UserService {
   async comparePasswords(plainTextPassword: string, hashedPassword: string) {
     return bcrypt.compare(plainTextPassword, hashedPassword);
   }
+  async createGoogleUser(user: any) {
+    return this.prisma.user.create({
+      data: {
+        email: user.email,
+        name: user.name,
+        // Optionally, you can set a default password for users created via Google
+        password: await bcrypt.hash('defaultPassword', 10),
+        role: Role.User, // Assign a default role
+      },
+    });
+  }
 }

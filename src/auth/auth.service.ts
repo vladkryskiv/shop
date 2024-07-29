@@ -19,12 +19,22 @@ export class AuthService {
     }
     return null;
   }
-
+  
   async login(user: any) {
     const payload = { username: user.email, sub: user.id, roles: user.role };  // Ensure roles are included
     return {
       access_token: this.jwtService.sign(payload),
     };
+  }
+  async validateUserByGoogle(user: any): Promise<any> {
+    const existingUser = await this.userService.findOneByEmail(user.email);
+    if (existingUser) {
+      return existingUser;
+    }
+
+    // If the user doesn't exist, create a new one
+    const newUser = await this.userService.createGoogleUser(user);
+    return newUser;
   }
 }
 
