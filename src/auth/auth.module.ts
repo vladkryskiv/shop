@@ -8,10 +8,11 @@ import { JwtStrategy } from './jwt.strategy';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { GoogleStrategy } from './strategies/google.strategy';
 import { AuthController } from './auth.controller';
-
+import { PrismaModule } from '../prisma/prisma.module';
 @Module({
   imports: [
     ConfigModule.forRoot(),
+    PrismaModule,
     PassportModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
@@ -19,12 +20,14 @@ import { AuthController } from './auth.controller';
         secret: configService.get<string>('JWT_SECRET'),
         signOptions: { expiresIn: '60m' },
       }),
+      
       inject: [ConfigService],
     }),
     forwardRef(() => UserModule),
+    
   ],
   providers: [AuthService, JwtStrategy,GoogleStrategy,],
-  exports: [AuthService],
+  exports: [AuthService,JwtStrategy, PassportModule],
   controllers: [AuthController],
 })
 export class AuthModule {}

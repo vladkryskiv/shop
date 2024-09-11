@@ -1,12 +1,31 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { Product, Prisma } from '@prisma/client';
+
+// Manually defined interfaces
+export interface Product {
+  id: number;
+  name: string;
+  description?: string;
+  price: number;
+  category: string;
+  image: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface ProductCreateInput {
+  name: string;
+  description?: string;
+  price: number;
+  category: string;
+  image: string;
+}
 
 @Injectable()
 export class ProductService {
   constructor(private prisma: PrismaService) {}
 
-  async createProduct(data: Prisma.ProductCreateInput): Promise<Product> {
+  async createProduct(data: ProductCreateInput): Promise<Product> {
     return this.prisma.product.create({
       data,
     });

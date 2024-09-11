@@ -10,6 +10,7 @@ import { UserService } from './user/user.service';
 import { AuthModule } from './auth/auth.module';
 import { JwtModule } from '@nestjs/jwt';
 import { jwtConstants } from './auth/constants';
+import { BasketModule } from './basket/basket.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { jwtConstants } from './auth/constants';
       secret: jwtConstants.secret,
       signOptions: { expiresIn: '60m' },
     }),
+    BasketModule,
   ],
   providers: [PrismaService, MailerService, UserService],
   controllers: [UserController],

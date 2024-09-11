@@ -1,23 +1,24 @@
-# Use the official Node.js image as the base image
-FROM node:14
+# Use an official Node.js runtime as a parent image
+FROM node:18-alpine
 
-# Create and set the working directory
+# Set the working directory
 WORKDIR /app
 
-# Copy the package.json and package-lock.json files
+# Copy package.json and install dependencies
 COPY package*.json ./
-
-# Install dependencies
 RUN npm install
 
 # Copy the rest of the application code
 COPY . .
 
-# Build the application
+# Run Prisma generate to create the Prisma client
+RUN npx prisma generate
+
+# Build the application (if applicable)
 RUN npm run build
 
-# Expose the port on which the app runs
+# Expose the port your app runs on
 EXPOSE 3000
 
 # Start the application
-CMD ["npm", "run", "start:prod"]
+CMD ["npm", "start"]
