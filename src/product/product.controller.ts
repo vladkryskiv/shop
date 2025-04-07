@@ -3,7 +3,7 @@ import { ProductService } from './product.service';
 import { CreateProductDto } from '../product/dto/create-product.dto';
 import { RolesGuard } from '../auth/roles.guard';
 import { Roles } from '../auth/roles.decorator';
-import { Role } from '../user/role.enum';  // Import the Role enum
+import { Role } from '../user/role.enum';
 
 @Controller('products')
 @UseGuards(RolesGuard)
@@ -11,13 +11,13 @@ export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
   @Post()
-  @Roles(Role.Admin)  // Use the Role enum
+  @Roles(Role.Admin)
   async createProduct(@Body() createProductDto: CreateProductDto) {
     return this.productService.createProduct(createProductDto);
   }
 
   @Get('search')
-  @Roles(Role.User, Role.Admin)  // Use the Role enum
+  @Roles(Role.User, Role.Admin)
   async searchProducts(
     @Query('name') name?: string,
     @Query('category') category?: string
@@ -32,7 +32,7 @@ export class ProductController {
   }
 
   @Get(':id')
-  @Roles(Role.User, Role.Admin)  // Use the Role enum
+  @Roles(Role.User, Role.Admin)
   async getProductById(@Param('id') id: number) {
     return this.productService.getProductById(id);
   }

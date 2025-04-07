@@ -9,7 +9,6 @@ import { MailerService } from './mailer/mailer.service';
 import { UserService } from './user/user.service';
 import { AuthModule } from './auth/auth.module';
 import { JwtModule } from '@nestjs/jwt';
-import { jwtConstants } from './auth/constants';
 import { BasketModule } from './basket/basket.module';
 
 @Module({
@@ -22,7 +21,7 @@ import { BasketModule } from './basket/basket.module';
     UserModule,
     AuthModule,
     JwtModule.register({
-      secret: jwtConstants.secret,
+      secret: process.env.JWT_SECRET,
       signOptions: { expiresIn: '60m' },
     }),
     BasketModule,

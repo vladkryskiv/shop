@@ -58,7 +58,7 @@ export class UserService {
       throw new UnauthorizedException('Invalid email or password');
     }
 
-    const payload = { sub: user.id, email: user.email, roles: user.role };  // Ensure roles are included
+    const payload = { sub: user.id, email: user.email, roles: user.role };
     return {
       access_token: this.jwtService.sign(payload),
     };
@@ -76,9 +76,8 @@ export class UserService {
       data: {
         email: user.email,
         name: user.name,
-        // Optionally, you can set a default password for users created via Google
         password: await bcrypt.hash('defaultPassword', 10),
-        role: Role.User, // Assign a default role
+        role: Role.User,
       },
     });
   }

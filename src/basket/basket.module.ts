@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { BasketController } from './basket.controller';
 import { BasketService } from './basket.service';
-import { PrismaModule } from '../prisma/prisma.module'; // Adjust the import path as necessary
+import { PrismaModule } from '../prisma/prisma.module';
 
 @Module({
   imports: [PrismaModule],
